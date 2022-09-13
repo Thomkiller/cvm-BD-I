@@ -1,0 +1,83 @@
+SELECT emp.prenom, emp.nom, moyennes.departement, moyennes.moyenne
+FROM employe AS emp
+INNER JOIN
+(SELECT AVG(salaire) as moyenne, departement
+FROM employe
+GROUP BY departement) AS moyennes
+ON emp.departement = moyennes.departement
+WHERE emp.salaire > moyennes.moyenne
+
+---requête corrélé-----
+SELECT prenom, nom, salaire
+FROM employe as emp
+WHERE salaire > (SELECT AVG(salaire)
+				From employe as emp2
+				Where emp2.departement = emp.departement
+				GROUP BY departement)
+				
+				
+				
+				
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+inner join employe as emp2
+ON emp.superviseur = emp2.nas
+WHERE emp.salaire >= emp2.salaire
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE salaire >= 
+(SELECT salaire
+FROM employe
+WHERE nas = emp.superviseur
+)
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE emp.superviseur = (
+SELECT superviseur
+FROM employe
+GROUP BY superviseur
+HAVING COUNT(*) >= 4)
+
+
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE departement in (
+SELECT departement
+FROM employe
+WHERE TO_CHAR(date_embauche, 'MM') <> '01'
+	AND TO_CHAR(date_embauche, 'MM') <> '05'
+	AND TO_CHAR(date_embauche, 'MM') <> '07'
+	AND TO_CHAR(date_embauche, 'MM') <> '09'
+
+);
+
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE salaire <= (
+SELECT AVG(salaire)
+	FROM employe
+)-(
+SELECT STDDEV(salaire)
+FROM employe);
+
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE salaire >= (
+SELECT AVG(salaire)
+FROM employe
+WHERE departement = emp.departement
+) AND emp.departement in (SELECT departement
+				   FROM employe
+				   GROUP BY departement
+				   HAVING COUNT(*)>2
+);
+
+
+SELECT emp.nom, emp.prenom
+FROM employe as emp
+WHERE 
