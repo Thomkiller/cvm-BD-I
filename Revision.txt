@@ -81,5 +81,68 @@ SELECT UPPER(LEFT(prenom, 1)) || '. ' || nom || ', habitant à ' || UPPER(ville)
 --du prénom, une barre, le nom, arobas et le domaine--
 SELECT SUBSTR(LOWER(prenom), 1, 2) || '_' || LOWER(nom) || '@abc_xyz.com' 
     FROM employe;
+    
+    
+ ---MANIPULATION DE DATE----
+ 
+ --5.2 après une certaine date ---
+-- a)
+SELECT nom, prenom, TO_CHAR(date_embauche, 'YYYY/MM/DD')
+    FROM employe
+    WHERE date_embauche > '2002-04-12';
+-- b)
+SELECT nom, prenom, TO_CHAR(date_embauche, 'YYYY/MM/DD')
+    FROM employe
+    WHERE date_embauche > TO_DATE('12|04|02', 'DD|MM|YY');
+
+---5.3 afficher entre deux date avec format précis-----
+SELECT nom, prenom, TO_CHAR(date_embauche, 'DD/MM/YY')
+    FROM employe
+    WHERE date_embauche BETWEEN TO_DATE('12 04 2001', 'DD MM YYYY') AND TO_DATE('02_05_12', 'YY_MM_DD');
+
+-- 5.5
+SELECT  nom, 
+        prenom, 
+        TO_CHAR(date_embauche, 'YYYY/MM/DD'), 
+        --NOW() - date_embauche,
+        DATE_PART('year', AGE(NOW(), date_embauche)) AS "Années",
+        DATE_PART('month', AGE(NOW(), date_embauche)) AS "Mois",
+        DATE_PART('day', AGE(NOW(), date_embauche)) AS "Jour",
+        DATE_PART('hour', AGE(NOW(), date_embauche)) AS "Heure",
+        DATE_PART('minute', AGE(NOW(), date_embauche)) AS "Minute",
+        DATE_PART('second', AGE(NOW(), date_embauche)) AS "Seconde"
+    FROM employe;
+
+
+---REQUETE NULL---
+
+6.1 utilisation parfaite d'un coalesce
+SELECT nom,
+32.0 * salaire + COALESCE(commission, 0) "Salaire total"
+FROM employe;
+
+--6.2 Affiche employe ne travaillant pas a la comission
+SELECT nom, prenom
+    FROM employe
+    WHERE commission IS NULL;
+
+--6.3 Affiche employe travaillant a la comission
+SELECT nom, prenom
+    FROM employe
+    WHERE commission IS NOT NULL;
+
+--6.4 Affiche employe comission inférieur a 500$ 
+-- a) que employé avec commission
+SELECT nom, prenom, commission
+    FROM employe
+    WHERE commission < 2000.0;
+-- b)donne valeur 0 a ceux qui non pas de commission
+SELECT nom, prenom, COALESCE(commission, 0.0) AS "Commission"
+    FROM employe
+    WHERE COALESCE(commission, 0.0) < 2000.0;
+
+--6.8 attribut valeur null--- 
+SELECT nom, prenom, NULLIF(ville, 'Laval')
+    FROM employe;
 	
 
