@@ -65,3 +65,21 @@ SELECT  id AS "Identifiant",
 									  
 ---MANIPULATION DE STRING----
 
+
+--4.1 concaténation avec alias-- 
+SELECT prenom ||' '|| nom AS "nom employe"
+FROM employe
+WHERE departement = 'r&d'
+
+--4.2 Afficher première lettre et construire phrase---
+SELECT UPPER(LEFT(prenom, 1)) || '. ' || nom || ', habitant à ' || UPPER(ville) || ' travail dans le département nommé ' || UPPER(departement) || '.'
+    FROM employe;
+	--UPER() = en majuscule--
+	--LEFT(prenom, 1) = va chercher dans prenom la première lettre 
+								
+--4.3 Adresse courriel ou utilise deux première lettre
+--du prénom, une barre, le nom, arobas et le domaine--
+SELECT SUBSTR(LOWER(prenom), 1, 2) || '_' || LOWER(nom) || '@abc_xyz.com' 
+    FROM employe;
+	
+
