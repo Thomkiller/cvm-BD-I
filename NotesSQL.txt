@@ -1,0 +1,31 @@
+CASE 
+WHEN genre ='h'
+THEN 'HOMME'
+WHEN genre = 'F'
+THEN 'FEMME'
+ELSE 'NON-BINAIRE'
+END AS genre
+
+OPÉRATEUR DE COMBINAISON DE REQUÊTE
+UNION
+INTERSECT
+EXCEPT
+
+OPERATEUR ENSEMBLISTES
+x IN (a,b,c) =  x=a OR x=b OR x=c
+x < ANY (a,b,c) = x<a OR x<b OR x<c
+x > ALL (a,b,c) = x>a AND x>b AND x>c
+EXISTS
+
+INDEX
+CREATE INDEX
+nom_index
+ON table
+colonne
+
+REQUETE PREPARE
+PREPARE nouvelle_pizza (VARCHAR(64), CHAR(4), TEXT, DECIMAL(5,2))
+AS
+INSERT INTO pizzas (nom, sigle, description, prix)
+VALUES ($1,$2,$3,$4);
+
