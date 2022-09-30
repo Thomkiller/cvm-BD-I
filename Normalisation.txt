@@ -1,0 +1,78 @@
+TRANSACTION (TCL)
+contrôle des transactions
+POURQUOI?
+pour préserver des propriété ACID d'une interaction sur une base de donnée
+A = Atomicité - transaction est faites au complet ou pas du tout
+C = Cohérence - toute transaction laisse la base de donnée dans un état valide
+I = Isolation - éviter l'interaction entre les transactions
+D = Durabilité - Guarantie par le système (transactions)
+
+def Transaction
+ouvre quand query commence et ferme quand query fini
+ begin;
+insert
+insert
+savepoint 'tempo';
+insert
+	if(...)
+		Rollback to 'tempo';
+end;
+commit;
+
+PROCEDURE ET FONCTIONS SQL
+
+fonctions - servent à retourner un résultat;
+pas faites pour faire des modifications à la BD
+peux les appelé en plein milieu des requêtes
+ex: SELECT MAKE_DATE()
+paramètre sont entre paranthèse
+
+procédures - retourne pas de résultat
+servent généralement à manipuler la BD
+possèdent des paramètres entre paranthèse
+Ils doivent être appelé explicitement à l'extérieur d'une requête avec le mot réservé CALL
+
+---créer une procédure---
+CREATE --[OR REPLACE] 
+PROCEDURE augmentation_salariale(
+	nombre int,
+    nom employe.nom%TYPE
+) 
+LANGUAGE SQL
+AS $$
+UPDATE TABLE employe
+SET salaire = salaire*(100+nombre)/100
+WHERE nom = inputnom
+$$
+
+-----Fonction------
+CREATE OR REPLACE FUNCTION get_red(
+	composite int
+) RETURNS int 
+LANGUAGE SQL
+AS 
+$$
+SELECT composite /(256 * 256) % 256
+LIMIT 1;
+$$
+
+
+NORMALISATION
+Effacité du stockage( plein de join pour avoir info simple)
+^
+| 7nf
+|
+|
+normalisation (le juste milieu) 
+|
+| 3nf
+- - > perfomance (répétion de l'information)
+
+NIVEAU DE NORMALISATION
+7 niveaux
+
+1nf tout attribut Atomique
+2nf complètement dépendant de la clé primaire 
+3nf tous les attributs sont dépendent de la clé primaire 
+
+
