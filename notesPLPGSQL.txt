@@ -1,0 +1,186 @@
+PL/PGSQL
+
+possédant langage procédural
+----------------------------
+PostgreSQL: PL/PGSQL
+Oracle: PLSQL
+MYSQL: ? pas de nom
+SQLite: non présent
+
+les pour
+--------------------------------
+-permet d'avoir plus d'intégrité
+-vérifications avancés du data
+-contraintes plus fortes 
+-plus de performance -- moins de transfert serveur-client
+		     -- serveur + puissant (En web +- vrai)
+-plus sécuritaire parce qu'il y a moins de data qui doit être exposé
+-avantage au niveau productivité puisque plus d'outils
+
+les moins
+---------------
+-plus compliqué
+
+
+4 formes
+--------
+procédure
+fonctions
+fonctions de déclencheur (trigger function)
+bloc anonyme
+-ils ont tous la même forme intérieur
+
+CREATE ---------
+$$ (string literal)
+DECLARE (optionnel mais recommander)
+BEGIN 
+END
+Exception
+$$ (string literal)
+
+Déboguage
+----------
+RAISE NOTICE (comme console.log())
+RAISE NOTICE 'String';
+RAISE NOTICE 'VAR1:%', age; (il faut mettre nombre de variable équivalent au nombre symbole de pourcentage %)
+	
+
+
+Déclaration de variable
+-----------------------
+DECLARE 
+nom_var INT;
+var_2 DATE;
+initialiser variable
+var_3 VACHAR:='ALLO';
+constante
+PI CONSTANT DECIMAL(5,4):=3.1416 
+BEGIN
+
+
+Block anonyme (Do Block)
+---------------------------------------
+DO
+LANGUAGE PLPGSQL (il faut l'utiliser)
+$$
+DECLARE
+BEGIN
+END
+$$
+
+Montrer heure actuelle avec bloc anonyme
+-----------------------------------------
+DO
+LANGUAGE PLPGSQL
+$$
+DECLARE
+date_actuelle TIMESTAMP:= NOW();
+BEGIN
+RAISE NOTICE 'date actuelle : %', date_actuelle;
+END
+
+Variables
+-------------------------------
+explicites - se fait avec les types primitifs
+ex : var_1 INT
+implicite - permet d'éviter de briser ses types
+var_1 employe.id%type;
+employe_actuel employe%ROWTYPE
+emloye_futur RECORD (variable dynamique)
+
+
+Structure de contrôle (change le flow du code)
+---------------------
+if
+-----------
+exemple 1
+----------
+if booléan
+then
+	code
+end if;
+exemple 2
+-----------------
+if var=3
+then
+	Raise Notice 'wow';
+else if var>3 
+then
+	raise notice 'owowow';
+else
+	raise notice 'bouh';
+end if;
+
+
+loop (contrôlé de l'intérieur)
+--------------------------
+Exemple 1
+---------------------------------
+Begin
+	loop
+	if condition
+	then exit;
+end loop;
+Exemple 2
+----------------------------------
+--For loop---
+DO
+LANGUAGE PLPGSQL
+$$
+DECLARE
+	x INT:= 0;
+BEGIN
+	LOOP
+		Raise notice 'x est : %', x;
+		if x=4
+		THEN exit;
+END IF;
+	x:= x+1;
+	END LOOP;
+END;
+$$
+
+while
+
+
+
+Search-Switch statement
+-------------------------------------------
+-Que des égalités comme switch classique
+-les breaks sont déja compris
+CASE variable
+	WHEN 1
+		THEN.......
+	WHEN 2
+		THEN..........
+	WHEN 3
+		THEN........
+	ELSE (DEFAULT)......
+END CASE;
+
+
+
+EXEMPLE DE FONCTION AVEC SWITCH
+-------------------------------
+-Return utilisable dans les bloc anonymes et les procédures
+
+CREATE OR REPLACE FUNCTION pizza_vege(sigle_var pizza.sigle%TYPE) RETURNS VARCHAR
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+biosphere VARCHAR;
+BEGIN
+CASE sigle_var
+	WHEN 'Marg'
+	THEN biosphere:= 'végétalienne';
+	WHEN 'Hawa','Vege'
+	THEN biosphere:= 'végétarienne';
+	ELSE biosphere:= 'omnivore';
+	END CASE;
+	RETURN biosphere;
+END;
+$$
+
+SELECT pizza_vege('Vege')
+
