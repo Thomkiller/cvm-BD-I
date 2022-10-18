@@ -184,3 +184,80 @@ $$
 
 SELECT pizza_vege('Vege')
 
+
+TRIGGER FUNCTION
+-----------------------------------------------
+RETURNS TRIGGER
+-NEW
+-OLD
+-NULL
+
+TRIGGER
+---------------------------------------------
+CREATE TRIGGER
+trois moment que s'effectue un trigger
+-INSERT
+-UPDATE 
+-DELETE
+mots clé devant
+-BEFORE
+-AFTER
+
+FOR EACH ROW 
+EXECUTE FUNCTION funk();
+
+EXEMPLE DE TRIGGER FUNCTION : EMPÊCHER CHANGER DE NOM
+------------------------------
+CREATE FUNCTION arretez_de_changer_de_nom()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+mauvais_nom VARCHAR := 'Robert'
+BEGIN
+IF old.prenom = 'Louis-Charles'
+THEN
+	IF new.prenom = mauvais_nom;
+	THEN 
+		RETURN NULL;
+	END IF;
+END IF;
+RETURN NEW;
+END;
+$$
+
+CREATE OR REPLACE TRIGGER check_nom
+BEFORE update ON client
+FOR EACH ROW
+EXECUTE FUNCTION arretez_de_changer_de_nom();
+
+
+
+
+CREATE OR REPLACE FUNCTION ma_pizza(
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+mot_interdit CONSTANT VARCHAR := '%viande%';
+BEGIN
+IF
+(SELECT COUNT(*)
+FROM pizza
+WHERE nom
+ILIKE mot_interdit)
+> 2
+THEN 
+RAISE EXCEPTION 'trop de pizza';
+RETUN NULL;
+END IF;
+RETURN NEW;
+END;
+$$
+
+CREATE OR REPLACE TRIGGER test_viande
+AFTER INSERT ON pizza
+FOR EACH ROW
+EXECUTE FUNCTION max_pizza();
